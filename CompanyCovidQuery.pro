@@ -9,17 +9,17 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp
+    src\main.cpp \
+    src\forms\mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h
+    src\forms\mainwindow.h
 
 FORMS += \
-    mainwindow.ui
+    src\forms\mainwindow.ui
 
 TRANSLATIONS += \
-    CompanyCovidQuery_af_ZA.ts
+    lang\CompanyCovidQuery_af_ZA.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
