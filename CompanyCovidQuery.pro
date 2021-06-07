@@ -1,8 +1,8 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     src/forms/surveydialog.cpp \
+    src/objects/surveydatabase.cpp \
     src\main.cpp \
     src\forms\mainwindow.cpp
 
 HEADERS += \
     src/forms/surveydialog.h \
+    src/objects/surveydatabase.h \
     src\forms\mainwindow.h
 
 FORMS += \
