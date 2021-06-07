@@ -9,13 +9,16 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/forms/surveydialog.cpp \
     src\main.cpp \
     src\forms\mainwindow.cpp
 
 HEADERS += \
+    src/forms/surveydialog.h \
     src\forms\mainwindow.h
 
 FORMS += \
+    src/forms/surveydialog.ui \
     src\forms\mainwindow.ui
 
 TRANSLATIONS += \
