@@ -16,12 +16,19 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QComboBox" name="comboEmployee"/>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QComboBox" name="comboEmployee"/>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tableSurveys"/>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableSurveys"/>
+       <widget class="QChartView" name="chartSurvey"/>
       </item>
      </layout>
     </item>
@@ -33,7 +40,7 @@
      <x>0</x>
      <y>0</y>
      <width>652</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -57,6 +64,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>QtCharts</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
