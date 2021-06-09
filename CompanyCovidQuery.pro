@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,20 +11,20 @@ CONFIG += c++17
 SOURCES += \
     src/forms/surveydialog.cpp \
     src/objects/surveydatabase.cpp \
-    src\main.cpp \
-    src\forms\mainwindow.cpp
+    src/main.cpp \
+    src/forms/mainwindow.cpp
 
 HEADERS += \
     src/forms/surveydialog.h \
     src/objects/surveydatabase.h \
-    src\forms\mainwindow.h
+    src/forms/mainwindow.h
 
 FORMS += \
     src/forms/surveydialog.ui \
-    src\forms\mainwindow.ui
+    src/forms/mainwindow.ui
 
 TRANSLATIONS += \
-    lang\CompanyCovidQuery_af_ZA.ts
+    lang/CompanyCovidQuery_af_ZA.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
