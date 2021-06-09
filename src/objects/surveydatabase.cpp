@@ -2,6 +2,10 @@
 
 #include <QSqlDatabase>
 #include <QSqlTableModel>
+#include <QFile>
+#include <QSqlQuery>
+#include <QtDebug>
+#include <QSqlError>
 
 SurveyDatabase::SurveyDatabase(QObject *parent) :
     QObject(parent),
@@ -11,14 +15,54 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
 {
 }
 
-void SurveyDatabase::createDatabase()
+bool SurveyDatabase::createDatabase(const QString &dir)
 {
+    if (!QFile::exists(dir)) {
+        surveyDb->setDatabaseName(dir);
 
+        if (surveyDb->open()) {
+            dbLocation = dir;
+            QSqlQuery surveyQry(*surveyDb);
+
+            surveyQry.prepare("CREATE TABLE Employee ("
+                              "emp_id INTEGER UNIQUE NOT NULL PRIMARY KEY AUTOINCREMENT,"
+                              "name TEXT NOT NULL);");
+
+            if (!surveyQry.exec()) {
+                qDebug() << "(DB) Error creating employee info: " << surveyQry.lastError().text() << Qt::endl;
+                closeDb();
+                return false;
+            }
+
+            surveyQry.prepare("CREATE TABLE Survey ("
+                              "survey_date INTEGER NOT NULL,"
+                              "emp_id INTEGER NOT NULL,"
+                              "q_one INTEGER,"
+                              "q_two INTEGER,"
+                              "q_three INTEGER,"
+                              "temperature REAL,"
+                              "PRIMARY KEY(survey_date, emp_id),"
+                              "FOREIGN KEY(emp_id) REFERENCES Employee(emp_id)"
+                              ");");
+
+            if (!surveyQry.exec()) {
+                qDebug() << "(DB) Error creating survey info: " << surveyQry.lastError().text() << Qt::endl;
+                closeDb();
+                return false;
+            } else {
+                closeDb();
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
-void SurveyDatabase::createTableModel()
+bool SurveyDatabase::createTableModel()
 {
-
+    // Implement me!
+    return true;
 }
 
 void SurveyDatabase::openDb()
