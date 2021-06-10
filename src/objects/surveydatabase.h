@@ -13,7 +13,6 @@ class SurveyDatabase : public QObject
 public:
     explicit SurveyDatabase(QObject *parent = nullptr);
     bool createDatabase(const QString &dir = QGuiApplication::applicationDirPath() + "/survey.data");
-    bool createTableModel();
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;
@@ -22,6 +21,7 @@ private:
 
     void openDb();
     void closeDb();
+    void createTableModel();
 };
 
 #endif // SURVEYDATABASE_H
