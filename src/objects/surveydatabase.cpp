@@ -11,7 +11,8 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
     QObject(parent),
     surveyDb(QSharedPointer<QSqlDatabase>(new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SurveyCon")))),
     surveyModel(QSharedPointer<QSqlTableModel>(new QSqlTableModel(this, *surveyDb))),
-    dbLocation("")
+    dbLocation(""),
+    currentEmpId(-1)
 {
 }
 
@@ -58,6 +59,11 @@ bool SurveyDatabase::createDatabase(const QString &dir)
     return true;
 }
 
+QSqlTableModel *SurveyDatabase::getSurveyModel()
+{
+    return surveyModel.data();
+}
+
 void SurveyDatabase::createTableModel()
 {
     openDb();
@@ -72,6 +78,11 @@ void SurveyDatabase::createTableModel()
     surveyModel->setHeaderData(4, Qt::Horizontal, tr("Temperature"));
 
     closeDb();
+}
+
+void SurveyDatabase::updateTableModel()
+{
+    // Implement me!
 }
 
 void SurveyDatabase::openDb()
