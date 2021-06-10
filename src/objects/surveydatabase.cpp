@@ -17,11 +17,12 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
 
 bool SurveyDatabase::createDatabase(const QString &dir)
 {
+    dbLocation = dir;
+
     if (!QFile::exists(dir)) {
         surveyDb->setDatabaseName(dir);
 
         if (surveyDb->open()) {
-            dbLocation = dir;
             QSqlQuery surveyQry(*surveyDb);
 
             surveyQry.prepare("CREATE TABLE Employee ("
@@ -49,14 +50,12 @@ bool SurveyDatabase::createDatabase(const QString &dir)
                 qDebug() << "(DB) Error creating survey info: " << surveyQry.lastError().text() << Qt::endl;
                 closeDb();
                 return false;
-            } else {
+            } else
                 closeDb();
-                return true;
-            }
         }
     }
 
-    return false;
+    return true;
 }
 
 bool SurveyDatabase::createTableModel()
