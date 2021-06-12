@@ -5,7 +5,7 @@
 #include <QGuiApplication>
 
 class QSqlDatabase;
-class QSqlTableModel;
+class QSqlQueryModel;
 
 class SurveyDatabase : public QObject
 {
@@ -13,18 +13,17 @@ class SurveyDatabase : public QObject
 public:
     explicit SurveyDatabase(QObject *parent = nullptr);
     bool createDatabase(const QString &dir = QGuiApplication::applicationDirPath() + "/survey.data");
-    QSqlTableModel* getSurveyModel();
+    void updateTableModel();
+    QSqlQueryModel* getSurveyModel();
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;
-    QSharedPointer<QSqlTableModel> surveyModel;
+    QSharedPointer<QSqlQueryModel> surveyModel;
     QString dbLocation;
     int currentEmpId;
 
     void openDb();
     void closeDb();
-    void createTableModel();
-    void updateTableModel();
 };
 
 #endif // SURVEYDATABASE_H

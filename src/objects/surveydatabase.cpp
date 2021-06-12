@@ -1,7 +1,7 @@
 #include "surveydatabase.h"
 
 #include <QSqlDatabase>
-#include <QSqlTableModel>
+#include <QSqlQueryModel>
 #include <QFile>
 #include <QSqlQuery>
 #include <QtDebug>
@@ -10,9 +10,9 @@
 SurveyDatabase::SurveyDatabase(QObject *parent) :
     QObject(parent),
     surveyDb(QSharedPointer<QSqlDatabase>(new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SurveyCon")))),
-    surveyModel(QSharedPointer<QSqlTableModel>(new QSqlTableModel(this, *surveyDb))),
+    surveyModel(QSharedPointer<QSqlQueryModel>(new QSqlQueryModel(this))),
     dbLocation(""),
-    currentEmpId(-1)
+    currentEmpId(1)
 {
 }
 
@@ -51,26 +51,29 @@ bool SurveyDatabase::createDatabase(const QString &dir)
                 qDebug() << "(DB) Error creating survey info: " << surveyQry.lastError().text() << Qt::endl;
                 closeDb();
                 return false;
-            } else
-                createTableModel();
+            }
         }
     }
+
+    updateTableModel();
 
     return true;
 }
 
-QSqlTableModel *SurveyDatabase::getSurveyModel()
+QSqlQueryModel *SurveyDatabase::getSurveyModel()
 {
     return surveyModel.data();
 }
 
-void SurveyDatabase::createTableModel()
+void SurveyDatabase::updateTableModel()
 {
     openDb();
 
-    surveyModel->setTable(tr("Surveys"));
-    surveyModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    surveyModel->select();
+    surveyModel->setQuery("SELECT survey_date, q_one, q_two, q_three, temperature "
+                          "FROM Survey "
+                          "WHERE emp_id = " + QString::number(currentEmpId) + " "
+                          "ORDER BY survey_date;", *surveyDb);
+
     surveyModel->setHeaderData(0, Qt::Horizontal, tr("Survey Date"));
     surveyModel->setHeaderData(1, Qt::Horizontal, tr("Question 1"));
     surveyModel->setHeaderData(2, Qt::Horizontal, tr("Question 2"));
@@ -78,11 +81,6 @@ void SurveyDatabase::createTableModel()
     surveyModel->setHeaderData(4, Qt::Horizontal, tr("Temperature"));
 
     closeDb();
-}
-
-void SurveyDatabase::updateTableModel()
-{
-    // Implement me!
 }
 
 void SurveyDatabase::openDb()
