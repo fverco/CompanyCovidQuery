@@ -98,7 +98,7 @@ void SurveyDatabase::updateTableModel()
     surveyModel->setHeaderData(1, Qt::Horizontal, tr("Question 1"));
     surveyModel->setHeaderData(2, Qt::Horizontal, tr("Question 2"));
     surveyModel->setHeaderData(3, Qt::Horizontal, tr("Question 3"));
-    surveyModel->setHeaderData(4, Qt::Horizontal, tr("Temperature"));
+    surveyModel->setHeaderData(4, Qt::Horizontal, tr("Temperature °C"));
 
     closeDb();
 }
