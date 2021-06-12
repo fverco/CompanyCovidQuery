@@ -7,6 +7,11 @@
 #include <QtDebug>
 #include <QSqlError>
 
+/*!
+ * \brief The constructor for the SurveyDatabase.
+ * \param parent = The QObject to which this object is bound to.
+ * The currentEmpId member is initialized to 1. This is because it is the number with which SQLite starts with.
+ */
 SurveyDatabase::SurveyDatabase(QObject *parent) :
     QObject(parent),
     surveyDb(QSharedPointer<QSqlDatabase>(new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SurveyCon")))),
@@ -16,6 +21,11 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
 {
 }
 
+/*!
+ * \brief Creates the database file if it doesn't exist and updates the survey model.
+ * \param dir = The full path to where the database file should be stored
+ * \return A boolean value stating whether the creation was successful or not.
+ */
 bool SurveyDatabase::createDatabase(const QString &dir)
 {
     dbLocation = dir;
@@ -60,11 +70,21 @@ bool SurveyDatabase::createDatabase(const QString &dir)
     return true;
 }
 
+/*!
+ * \brief Returns a pointer to the DB's survey model.
+ * \return A QSqlQueryModel pointer of the model.
+ * \note The returned pointer MUST NOT be deleted.
+ */
 QSqlQueryModel *SurveyDatabase::getSurveyModel()
 {
     return surveyModel.data();
 }
 
+/*!
+ * \brief Update the survey model with the current employee ID.
+ *
+ * Updates the survey model to display the current state of survey data from the current employee ID from currentEmpId.
+ */
 void SurveyDatabase::updateTableModel()
 {
     openDb();
@@ -83,6 +103,9 @@ void SurveyDatabase::updateTableModel()
     closeDb();
 }
 
+/*!
+ * \brief Opens a connection to the database.
+ */
 void SurveyDatabase::openDb()
 {
     if (!surveyDb->isOpen()) {
@@ -91,6 +114,9 @@ void SurveyDatabase::openDb()
     }
 }
 
+/*!
+ * \brief Closes the connection to the database if it is open.
+ */
 void SurveyDatabase::closeDb()
 {
     if (surveyDb->isOpen())

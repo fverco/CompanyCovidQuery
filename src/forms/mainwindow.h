@@ -9,6 +9,9 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+/*!
+ * \brief The main window to be used in the application.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -18,7 +21,7 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
-    SurveyDatabase surveyDb;
+    Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
+    SurveyDatabase surveyDb;    ///< The database variable that stores the survey data.
 };
 #endif // MAINWINDOW_H

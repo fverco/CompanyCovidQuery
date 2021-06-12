@@ -7,6 +7,9 @@ namespace Ui {
 class SurveyDialog;
 }
 
+/*!
+ * \brief The window where new survey data is entered, or existing survey data is changed.
+ */
 class SurveyDialog : public QDialog
 {
     Q_OBJECT
@@ -16,7 +19,7 @@ public:
     ~SurveyDialog();
 
 private:
-    Ui::SurveyDialog *ui;
+    Ui::SurveyDialog *ui;   ///< The reference to the UI of the SurveyDialog.
 };
 
 #endif // SURVEYDIALOG_H

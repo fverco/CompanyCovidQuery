@@ -4,6 +4,12 @@
 #include <QLocale>
 #include <QTranslator>
 
+/*!
+ * \brief Start the application.
+ * \param argc The amount of arguments passed to the application at start.
+ * \param argv A list of all the arguments passed to the application at start.
+ * \return An integer that shows whether the application was successful or not.
+ */
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

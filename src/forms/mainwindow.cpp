@@ -3,6 +3,10 @@
 
 #include <QSqlTableModel>
 
+/*!
+ * \brief The constructor for the MainWindow.
+ * \param parent = The QWidget to which this window is bound to.
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow),
@@ -16,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableSurveys->setModel(surveyDb.getSurveyModel());
 }
 
+/*!
+ * \brief The destructor for the MainWindow.
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
