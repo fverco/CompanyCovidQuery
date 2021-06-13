@@ -17,7 +17,12 @@ public:
     explicit SurveyDatabase(QObject *parent = nullptr);
     bool createDatabase(const QString &dir = QGuiApplication::applicationDirPath() + "/survey.data");
     void updateTableModel();
+
     QSqlQueryModel* getSurveyModel();
+    QMap<int, QString> getEmployees();
+    int getCurrentEmployeeId() const;
+
+    void setCurrentEmployeeId(const int &id);
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.

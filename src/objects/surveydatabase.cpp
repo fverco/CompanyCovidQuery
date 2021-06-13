@@ -17,7 +17,7 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
     surveyDb(QSharedPointer<QSqlDatabase>(new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SurveyCon")))),
     surveyModel(QSharedPointer<QSqlQueryModel>(new QSqlQueryModel(this))),
     dbLocation(""),
-    currentEmpId(1)
+    currentEmpId(-1)
 {
 }
 
@@ -78,6 +78,50 @@ bool SurveyDatabase::createDatabase(const QString &dir)
 QSqlQueryModel *SurveyDatabase::getSurveyModel()
 {
     return surveyModel.data();
+}
+
+/*!
+ * \brief Retrieves all the employee data stored in the database.
+ * \return A QMap<int, QString> with the ID and the name of each employee.
+ * \note The returned employee list is sorted by name.
+ */
+QMap<int, QString> SurveyDatabase::getEmployees()
+{
+    openDb();
+
+    QMap<int, QString> empList;
+    QSqlQuery surveyQry(*surveyDb);
+
+    surveyQry.prepare("SELECT emp_id, name FROM Employee ORDER BY name;");
+
+    if (surveyQry.exec()) {
+        while(surveyQry.next())
+            empList.insert(surveyQry.value(0).toInt(), surveyQry.value(1).toString());
+    } else
+        qDebug() << "(DB) Error loading employee data: " << surveyQry.lastError() << Qt::endl;
+
+    closeDb();
+    return empList;
+}
+
+/*!
+ * \brief Retrieves the employee ID currently being used by the database.
+ * \return An integer with the employee ID.
+ */
+int SurveyDatabase::getCurrentEmployeeId() const
+{
+    return currentEmpId;
+}
+
+/*!
+ * \brief Assigns a new employee ID to use by the database.
+ * \param id = The new employee ID
+ * \note It will only assign the new ID if the new ID is -1 or larger. The value -1 means 'No ID' and any number that follows can be a valid SQLite ID.
+ */
+void SurveyDatabase::setCurrentEmployeeId(const int &id)
+{
+    if (id >= -1)
+        currentEmpId = id;
 }
 
 /*!

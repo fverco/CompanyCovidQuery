@@ -19,6 +19,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void updateEmployeeComboBox();
+
+public slots:
+    void updateSurveyTableModel();
 
 private:
     Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
