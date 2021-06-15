@@ -41,6 +41,8 @@ MainWindow::~MainWindow()
  */
 void MainWindow::updateEmployeeComboBox()
 {
+    ui->comboEmployee->clear();
+
     QMap<int, QString> empList(surveyDb.getEmployees());
     QMapIterator<int, QString> i(empList);
 
