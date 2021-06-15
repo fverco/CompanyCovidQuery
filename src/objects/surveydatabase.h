@@ -24,6 +24,8 @@ public:
 
     void setCurrentEmployeeId(const int &id);
 
+    bool addEmployee(const QString &name);
+
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.
     QSharedPointer<QSqlQueryModel> surveyModel; ///< The data model used to display data from the DB in a view.

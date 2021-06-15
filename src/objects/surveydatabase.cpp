@@ -125,6 +125,33 @@ void SurveyDatabase::setCurrentEmployeeId(const int &id)
 }
 
 /*!
+ * \brief Adds a new employee to the database.
+ * \param name = The name of the new employee
+ * \return A boolean value that states whether the transation was successful or not.
+ */
+bool SurveyDatabase::addEmployee(const QString &name)
+{
+    if (name.length() > 0) {
+        openDb();
+
+        QSqlQuery surveyQry(*surveyDb);
+
+        surveyQry.prepare("INSERT INTO Employee (name) VALUES (?);");
+        surveyQry.addBindValue(name);
+
+        if (surveyQry.exec()) {
+            closeDb();
+            return true;
+        } else {
+            qDebug() << "(DB) Error adding new employee: " << surveyQry.lastError().text() << Qt::endl;
+            closeDb();
+        }
+    }
+
+    return false;
+}
+
+/*!
  * \brief Update the survey model with the current employee ID.
  *
  * Updates the survey model to display the current state of survey data from the current employee ID from currentEmpId.

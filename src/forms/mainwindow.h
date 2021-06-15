@@ -23,6 +23,7 @@ public:
 
 public slots:
     void updateSurveyTableModel();
+    void addNewEmployee();
 
 private:
     Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
