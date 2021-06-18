@@ -2,6 +2,7 @@
 #define SURVEYDIALOG_H
 
 #include <QDialog>
+#include <QAbstractButton>
 
 namespace Ui {
 class SurveyDialog;
@@ -15,11 +16,26 @@ class SurveyDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SurveyDialog(QWidget *parent = nullptr);
+    explicit SurveyDialog(const int& emp, QWidget *parent = nullptr);
     ~SurveyDialog();
+
+signals:
+    void sendNewSurvey(const int& empId,
+                       const bool& qOne,
+                       const bool& qTwo,
+                       const bool& qThree,
+                       const double& temp);
+
+private slots:
+    void on_buttonBox_clicked(QAbstractButton *button);
+    void questionAnswered();
 
 private:
     Ui::SurveyDialog *ui;   ///< The reference to the UI of the SurveyDialog.
+    int empId; ///< The ID of the employee to which this survey belongs.
+    QSharedPointer<QButtonGroup> rbgroupQOne;   ///< The button group for the question 1 radio buttons.
+    QSharedPointer<QButtonGroup> rbgroupQTwo;   ///< The button group for the question 2 radio buttons.
+    QSharedPointer<QButtonGroup> rbgroupQThree; ///< The button group for the question 3 radio buttons.
 };
 
 #endif // SURVEYDIALOG_H
