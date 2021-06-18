@@ -1,4 +1,4 @@
-#include "surveydatabase.h"
+﻿#include "surveydatabase.h"
 
 #include <QSqlDatabase>
 #include <QSqlQueryModel>
@@ -6,6 +6,8 @@
 #include <QSqlQuery>
 #include <QtDebug>
 #include <QSqlError>
+#include <QDateTime>
+#include <QDate>
 
 /*!
  * \brief The constructor for the SurveyDatabase.
@@ -127,7 +129,7 @@ void SurveyDatabase::setCurrentEmployeeId(const int &id)
 /*!
  * \brief Adds a new employee to the database.
  * \param name = The name of the new employee
- * \return A boolean value that states whether the transation was successful or not.
+ * \return A boolean value that states whether the transaction was successful or not.
  */
 bool SurveyDatabase::addEmployee(const QString &name)
 {
@@ -148,6 +150,57 @@ bool SurveyDatabase::addEmployee(const QString &name)
         }
     }
 
+    return false;
+}
+
+/*!
+ * \brief Adds a new survey to the database.
+ * \param empId = The employee's ID
+ * \param qOne = The answer to question 1
+ * \param qTwo = The answer to question 2
+ * \param qThree = The answer to question 3
+ * \param temp = The employee's temperature
+ * \return A boolean value that states whether the transaction was successful or not.
+ * \note This will also check if a combination of this date and employee ID hasn't already been added. It will return false if it was.
+ */
+bool SurveyDatabase::addSurvey(const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
+{
+    openDb();
+
+    QDateTime currentDateTime(QDate::currentDate(), QTime(0,0));
+    int today(currentDateTime.toSecsSinceEpoch());
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    surveyQry.prepare("SELECT COUNT(*) FROM Survey WHERE survey_date = :date AND emp_id = :id;");
+    surveyQry.bindValue(":date", today);
+    surveyQry.bindValue(":id", empId);
+
+    if (surveyQry.exec()) {
+        if (surveyQry.next()) {
+            if (surveyQry.value(0).toInt() == 0) {
+
+                surveyQry.prepare("INSERT INTO Survey (survey_date, emp_id, q_one, q_two, q_three, temperature) "
+                                  "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
+
+                surveyQry.bindValue(":date", today);
+                surveyQry.bindValue(":id", empId);
+                surveyQry.bindValue(":q1", qOne);
+                surveyQry.bindValue(":q2", qTwo);
+                surveyQry.bindValue(":q3", qThree);
+                surveyQry.bindValue(":temp", temp);
+
+                if (surveyQry.exec()) {
+                    closeDb();
+                    return true;
+                } else
+                    qDebug() << "(DB) Error adding survey: " << surveyQry.lastError().text() << Qt::endl;
+            }
+        }
+    } else
+        qDebug() << "(DB) Error verifying survey: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
     return false;
 }
 

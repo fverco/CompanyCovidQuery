@@ -25,6 +25,11 @@ public:
     void setCurrentEmployeeId(const int &id);
 
     bool addEmployee(const QString &name);
+    bool addSurvey(const int &empId,
+                   const bool &qOne,
+                   const bool &qTwo,
+                   const bool &qThree,
+                   const double &temp);
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.
