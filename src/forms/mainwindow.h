@@ -24,6 +24,15 @@ public:
 public slots:
     void updateSurveyTableModel();
     void addNewEmployee();
+    void openSurveyDialog();
+    void addNewSurvey(const int& empId,
+                      const bool& qOne,
+                      const bool& qTwo,
+                      const bool& qThree,
+                      const double& temp);
+
+private slots:
+    void on_btnAddSurvey_clicked();
 
 private:
     Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
