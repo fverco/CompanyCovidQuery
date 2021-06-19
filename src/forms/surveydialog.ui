@@ -59,7 +59,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QDateEdit" name="deSurveyDate"/>
+        <widget class="QDateEdit" name="deSurveyDate">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
