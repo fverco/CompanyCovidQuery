@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QMessageBox>
+#include <QDate>
 
 /*!
  * \brief The constructor for the SurveyDialog.
@@ -36,7 +37,9 @@ SurveyDialog::SurveyDialog(const int& emp, QWidget *parent) :
     rbgroupQThree->addButton(ui->rbQThreeYes);
     rbgroupQThree->addButton(ui->rbQThreeNo);
 
-
+    // Set the default date to today and give the date edit a calendar popup.
+    ui->cbTodayDate->setCheckState(Qt::CheckState::Checked);
+    ui->deSurveyDate->setCalendarPopup(true);
 }
 
 /*!
@@ -55,12 +58,13 @@ void SurveyDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
     if (button->text() == "Add") {
 
+        QDate survDate(ui->deSurveyDate->date());
         bool qOne(rbgroupQOne->checkedButton()->text() == "Yes"),
              qTwo(rbgroupQTwo->checkedButton()->text() == "Yes"),
              qThree(rbgroupQThree->checkedButton()->text() == "Yes");
         double temp(ui->dspinTemp->value());
 
-        emit sendNewSurvey(empId, qOne, qTwo, qThree, temp);
+        emit sendNewSurvey(survDate, empId, qOne, qTwo, qThree, temp);
 
     } else if (button->text() == "Cancel")
         this->close();
@@ -78,3 +82,16 @@ void SurveyDialog::questionAnswered()
     }
 }
 
+/*!
+ * \brief Executes whenever the "Today" checkbox is ticked.
+ * \param arg1 = The state of the checkbox after being ticked
+ * \note This will set the date to today, and disable the date edit if checked.
+ */
+void SurveyDialog::on_cbTodayDate_stateChanged(int arg1)
+{
+    if (arg1 == Qt::CheckState::Checked) {
+        ui->deSurveyDate->setDate(QDate::currentDate());
+        ui->deSurveyDate->setEnabled(false);
+    } else
+        ui->deSurveyDate->setEnabled(true);
+}

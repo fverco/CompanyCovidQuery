@@ -20,7 +20,8 @@ public:
     ~SurveyDialog();
 
 signals:
-    void sendNewSurvey(const int& empId,
+    void sendNewSurvey(const QDate& date,
+                       const int& empId,
                        const bool& qOne,
                        const bool& qTwo,
                        const bool& qThree,
@@ -29,6 +30,8 @@ signals:
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
     void questionAnswered();
+
+    void on_cbTodayDate_stateChanged(int arg1);
 
 private:
     Ui::SurveyDialog *ui;   ///< The reference to the UI of the SurveyDialog.
