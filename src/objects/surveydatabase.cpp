@@ -167,7 +167,7 @@ bool SurveyDatabase::addSurvey(const int &empId, const bool &qOne, const bool &q
 {
     openDb();
 
-    QDateTime currentDateTime(QDate::currentDate(), QTime(0,0));
+    QDateTime currentDateTime(QDate::currentDate(), QTime(12,0));
     int today(currentDateTime.toSecsSinceEpoch());
 
     QSqlQuery surveyQry(*surveyDb);
