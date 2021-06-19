@@ -107,9 +107,9 @@ void MainWindow::openSurveyDialog()
  * \param temp = The employee's temperature
  * \note This will automatically update the survey table if successful.
  */
-void MainWindow::addNewSurvey(const int& empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
+void MainWindow::addNewSurvey(const QDate &survDate, const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
 {
-    if (surveyDb.addSurvey(empId, qOne, qTwo, qThree, temp)) {
+    if (surveyDb.addSurvey(survDate, empId, qOne, qTwo, qThree, temp)) {
         updateSurveyTableModel();
         QMessageBox::information(this, tr("Success"), tr("The new survey has been successfully added."));
     } else

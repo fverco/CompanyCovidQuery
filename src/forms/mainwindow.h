@@ -25,7 +25,8 @@ public slots:
     void updateSurveyTableModel();
     void addNewEmployee();
     void openSurveyDialog();
-    void addNewSurvey(const int& empId,
+    void addNewSurvey(const QDate& date,
+                      const int& empId,
                       const bool& qOne,
                       const bool& qTwo,
                       const bool& qThree,
