@@ -163,17 +163,17 @@ bool SurveyDatabase::addEmployee(const QString &name)
  * \return A boolean value that states whether the transaction was successful or not.
  * \note This will also check if a combination of this date and employee ID hasn't already been added. It will return false if it was.
  */
-bool SurveyDatabase::addSurvey(const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
+bool SurveyDatabase::addSurvey(const QDate &date, const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
 {
     openDb();
 
-    QDateTime currentDateTime(QDate::currentDate(), QTime(12,0));
-    int today(currentDateTime.toSecsSinceEpoch());
+    QDateTime surveyDate(date, QTime(12,0));
+    int surveyDateUnix(surveyDate.toSecsSinceEpoch());
 
     QSqlQuery surveyQry(*surveyDb);
 
     surveyQry.prepare("SELECT COUNT(*) FROM Survey WHERE survey_date = :date AND emp_id = :id;");
-    surveyQry.bindValue(":date", today);
+    surveyQry.bindValue(":date", surveyDateUnix);
     surveyQry.bindValue(":id", empId);
 
     if (surveyQry.exec()) {
@@ -183,7 +183,7 @@ bool SurveyDatabase::addSurvey(const int &empId, const bool &qOne, const bool &q
                 surveyQry.prepare("INSERT INTO Survey (survey_date, emp_id, q_one, q_two, q_three, temperature) "
                                   "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
 
-                surveyQry.bindValue(":date", today);
+                surveyQry.bindValue(":date", surveyDateUnix);
                 surveyQry.bindValue(":id", empId);
                 surveyQry.bindValue(":q1", qOne);
                 surveyQry.bindValue(":q2", qTwo);

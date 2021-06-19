@@ -25,7 +25,8 @@ public:
     void setCurrentEmployeeId(const int &id);
 
     bool addEmployee(const QString &name);
-    bool addSurvey(const int &empId,
+    bool addSurvey(const QDate &date,
+                   const int &empId,
                    const bool &qOne,
                    const bool &qTwo,
                    const bool &qThree,
