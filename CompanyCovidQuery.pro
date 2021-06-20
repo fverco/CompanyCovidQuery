@@ -12,12 +12,14 @@ SOURCES += \
     src/forms/surveydialog.cpp \
     src/objects/surveydatabase.cpp \
     src/main.cpp \
-    src/forms/mainwindow.cpp
+    src/forms/mainwindow.cpp \
+    src/objects/surveytablemodel.cpp
 
 HEADERS += \
     src/forms/surveydialog.h \
     src/objects/surveydatabase.h \
-    src/forms/mainwindow.h
+    src/forms/mainwindow.h \
+    src/objects/surveytablemodel.h
 
 FORMS += \
     src/forms/surveydialog.ui \
