@@ -21,14 +21,18 @@ QVariant SurveyTableModel::data(const QModelIndex &index, int role) const
     QVariant value(QSqlQueryModel::data(index, role));
 
     switch (index.column()) {
-    case 0:
+
+    case TableColumns::Date:
         return convertDateValue(value);
-    case 1:
-    case 2:
-    case 3:
+
+    case TableColumns::Question1:
+    case TableColumns::Question2:
+    case TableColumns::Question3:
         return convertBoolValue(value);
-    case 4:
+
+    case TableColumns::Temperature:
         return convertDoubleValue(value);
+
     default:
         return QVariant(QString("Unknown type"));
     }

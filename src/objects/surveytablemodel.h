@@ -4,6 +4,18 @@
 #include <QSqlQueryModel>
 
 /*!
+ * \brief Enum for the column headers found in the survey table.
+ * \note The order in which they appear here is also their order in the table.
+ */
+enum TableColumns {
+    Date,           ///< 0
+    Question1,      ///< 1
+    Question2,      ///< 2
+    Question3,      ///< 3
+    Temperature     ///< 4
+};
+
+/*!
  * \brief The model for displaying the SurveyDatabase items in a table.
  */
 class SurveyTableModel : public QSqlQueryModel
