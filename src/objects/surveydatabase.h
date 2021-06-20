@@ -1,6 +1,8 @@
 #ifndef SURVEYDATABASE_H
 #define SURVEYDATABASE_H
 
+#include "surveytablemodel.h"
+
 #include <QSharedPointer>
 #include <QGuiApplication>
 
@@ -34,7 +36,7 @@ public:
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.
-    QSharedPointer<QSqlQueryModel> surveyModel; ///< The data model used to display data from the DB in a view.
+    QSharedPointer<SurveyTableModel> surveyModel; ///< The data model used to display data from the DB in a view.
     QString dbLocation;     ///< The full path to where the database file is stored.
     int currentEmpId;       ///< The current employee ID being focussed on.
 
