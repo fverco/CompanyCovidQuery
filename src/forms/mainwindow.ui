@@ -55,6 +55,9 @@
         </item>
         <item>
          <widget class="QTableView" name="tableSurveys">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
           </property>
@@ -93,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>1231</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNew">
