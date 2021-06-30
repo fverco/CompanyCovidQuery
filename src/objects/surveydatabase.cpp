@@ -205,6 +205,37 @@ bool SurveyDatabase::addSurvey(const QDate &date, const int &empId, const bool &
 }
 
 /*!
+ * \brief Removes a survey from the database.
+ * \param date = The survey date
+ * \param empId = The employee's ID
+ * \return A boolean value that states whether the transaction was successful or not.
+ */
+bool SurveyDatabase::removeSurvey(const QDate &date, const int &empId)
+{
+    openDb();
+
+    QDateTime surveyDate(date, QTime(12, 0));
+    int surveyDateUnix(surveyDate.toSecsSinceEpoch());
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    surveyQry.prepare("DELETE FROM Survey "
+                      "WHERE survey_date = :date AND emp_id = :id;");
+
+    surveyQry.bindValue(":date", surveyDateUnix);
+    surveyQry.bindValue(":id", empId);
+
+    if (surveyQry.exec()) {
+        closeDb();
+        return true;
+    } else
+        qDebug() << "(DB) Error removing survey: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
+    return false;
+}
+
+/*!
  * \brief Update the survey model with the current employee ID.
  *
  * Updates the survey model to display the current state of survey data from the current employee ID from currentEmpId.

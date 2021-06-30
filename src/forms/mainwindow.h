@@ -23,14 +23,17 @@ public:
 
 public slots:
     void updateSurveyTableModel();
-    void addNewEmployee();
+    void addEmployee();
     void openSurveyDialog();
-    void addNewSurvey(const QDate& date,
-                      const int& empId,
-                      const bool& qOne,
-                      const bool& qTwo,
-                      const bool& qThree,
-                      const double& temp);
+    void addSurvey(const QDate& date,
+                   const int& empId,
+                   const bool& qOne,
+                   const bool& qTwo,
+                   const bool& qThree,
+                   const double& temp);
+    void removeSurvey(const QDate& date,
+                      const int& empId);
+
 
 private slots:
     void on_btnAddSurvey_clicked();
@@ -38,5 +41,7 @@ private slots:
 private:
     Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
     SurveyDatabase surveyDb;    ///< The database variable that stores the survey data.
+
+    void setupSurveyTableContextMenu();
 };
 #endif // MAINWINDOW_H

@@ -33,6 +33,8 @@ public:
                    const bool &qTwo,
                    const bool &qThree,
                    const double &temp);
+    bool removeSurvey(const QDate &date,
+                      const int &empId);
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.

@@ -4,6 +4,7 @@
 
 #include <QSqlTableModel>
 #include <QMessageBox>
+#include <QSqlRecord>
 
 /*!
  * \brief The constructor for the MainWindow.
@@ -14,17 +15,24 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow),
       surveyDb()
 {
+    // Initialize the UI.
     ui->setupUi(this);
 
+    // Update the survey table when a new employee is selected.
     connect(ui->comboEmployee, &QComboBox::currentIndexChanged, this, &MainWindow::updateSurveyTableModel);
-    connect(ui->actionNewEmployee, &QAction::triggered, this, &MainWindow::addNewEmployee);
 
+    // Connect the new employee action button.
+    connect(ui->actionNewEmployee, &QAction::triggered, this, &MainWindow::addEmployee);
+
+    // Setup the database.
     if (!surveyDb.createDatabase())
         QApplication::quit();
 
     updateEmployeeComboBox();
 
     ui->tableSurveys->setModel(surveyDb.getSurveyModel());
+
+    setupSurveyTableContextMenu();
 }
 
 /*!
@@ -68,7 +76,7 @@ void MainWindow::updateSurveyTableModel()
 /*!
  * \brief Asks user for an employee name and adds it to the database.
  */
-void MainWindow::addNewEmployee()
+void MainWindow::addEmployee()
 {
     bool ok;
     QString empName = QInputDialog::getText(this, tr("New Employee"),
@@ -92,7 +100,7 @@ void MainWindow::openSurveyDialog()
 {
     SurveyDialog *surveyDialog(new SurveyDialog(ui->comboEmployee->currentData().toInt() , this));
 
-    connect(surveyDialog, &SurveyDialog::sendNewSurvey, this, &MainWindow::addNewSurvey);
+    connect(surveyDialog, &SurveyDialog::sendNewSurvey, this, &MainWindow::addSurvey);
 
     surveyDialog->setAttribute(Qt::WA_DeleteOnClose);
     surveyDialog->open();
@@ -107,7 +115,7 @@ void MainWindow::openSurveyDialog()
  * \param temp = The employee's temperature
  * \note This will automatically update the survey table if successful.
  */
-void MainWindow::addNewSurvey(const QDate &survDate, const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
+void MainWindow::addSurvey(const QDate &survDate, const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
 {
     if (surveyDb.addSurvey(survDate, empId, qOne, qTwo, qThree, temp)) {
         updateSurveyTableModel();
@@ -117,11 +125,61 @@ void MainWindow::addNewSurvey(const QDate &survDate, const int &empId, const boo
 }
 
 /*!
+ * \brief Removes the survey that contains the given date and employee ID.
+ * \param date = The survey date
+ * \param empId = The employee's ID
+ * \note This does not generate a confirmation message. It only generates an error message if the action failed.
+ */
+void MainWindow::removeSurvey(const QDate &date, const int &empId)
+{
+    if (surveyDb.removeSurvey(date, empId))
+        updateSurveyTableModel();
+    else
+        QMessageBox::critical(this, tr("Error"), tr("An unexpected error has ocurred while removing the survey."));
+}
+
+/*!
  * \brief The function executed when clicking the Add Survey button.
  * This function will call the openSurveyDialog() function.
  */
 void MainWindow::on_btnAddSurvey_clicked()
 {
     openSurveyDialog();
+}
+
+/*!
+ * \brief Create the context menu for the survey table.
+ */
+void MainWindow::setupSurveyTableContextMenu()
+{
+    // Use tableSurveys' actions as context menu items.
+    ui->tableSurveys->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    QAction* deleteAction(new QAction("Delete", this));
+    connect(deleteAction, &QAction::triggered, [this]() {
+        if (QMessageBox::question(this, "Delete survey?",
+                                  "Are you sure you wish to delete this survey?") == QMessageBox::Yes)
+        {
+            QModelIndexList indexList(ui->tableSurveys->selectionModel()->selectedRows());
+
+            // Retrieve the first row in the list.
+            // Only one selected row should be allowed.
+            QModelIndex index(indexList[0]);
+
+            // Retrieve the record of the row in the survey model.
+            QSqlRecord surveyRecord(surveyDb.getSurveyModel()->record(index.row()));
+
+            // Convert the formatted string date to a QDate value.
+            QDate surveyDate(QDate::fromString(surveyRecord.value(TableColumns::Date).toString(), "dd/MM/yyyy"));
+
+            // Get the current employee's ID.
+            int surveyEmpId(ui->comboEmployee->currentData().toInt());
+
+            removeSurvey(surveyDate, surveyEmpId);
+        }
+    });
+
+
+    ui->tableSurveys->addAction(deleteAction);
 }
 
