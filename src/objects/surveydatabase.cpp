@@ -18,6 +18,7 @@ SurveyDatabase::SurveyDatabase(QObject *parent) :
     QObject(parent),
     surveyDb(QSharedPointer<QSqlDatabase>(new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SurveyCon")))),
     surveyModel(QSharedPointer<SurveyTableModel>(new SurveyTableModel(this))),
+    employeeModel(QSharedPointer<EmployeeTableModel>(new EmployeeTableModel(this))),
     dbLocation(""),
     currentEmpId(-1)
 {
@@ -67,7 +68,8 @@ bool SurveyDatabase::createDatabase(const QString &dir)
         }
     }
 
-    updateTableModel();
+    updateEmployeeTableModel();
+    updateSurveyTableModel();
 
     return true;
 }
@@ -83,27 +85,13 @@ QSqlQueryModel *SurveyDatabase::getSurveyModel()
 }
 
 /*!
- * \brief Retrieves all the employee data stored in the database.
- * \return A QMap<int, QString> with the ID and the name of each employee.
- * \note The returned employee list is sorted by name.
+ * \brief Returns a pointer to the DB's employee model.
+ * \return A QSqlQueryModel pointer of the model.
+ * \note The returned pointer MUST NOT be deleted.
  */
-QMap<int, QString> SurveyDatabase::getEmployees()
+QSqlQueryModel *SurveyDatabase::getEmployeeModel()
 {
-    openDb();
-
-    QMap<int, QString> empList;
-    QSqlQuery surveyQry(*surveyDb);
-
-    surveyQry.prepare("SELECT emp_id, name FROM Employee ORDER BY name;");
-
-    if (surveyQry.exec()) {
-        while(surveyQry.next())
-            empList.insert(surveyQry.value(0).toInt(), surveyQry.value(1).toString());
-    } else
-        qDebug() << "(DB) Error loading employee data: " << surveyQry.lastError() << Qt::endl;
-
-    closeDb();
-    return empList;
+    return employeeModel.data();
 }
 
 /*!
@@ -240,7 +228,7 @@ bool SurveyDatabase::removeSurvey(const QDate &date, const int &empId)
  *
  * Updates the survey model to display the current state of survey data from the current employee ID from currentEmpId.
  */
-void SurveyDatabase::updateTableModel()
+void SurveyDatabase::updateSurveyTableModel()
 {
     openDb();
 
@@ -249,11 +237,23 @@ void SurveyDatabase::updateTableModel()
                           "WHERE emp_id = " + QString::number(currentEmpId) + " "
                           "ORDER BY survey_date;", *surveyDb);
 
-    surveyModel->setHeaderData(TableColumns::Date, Qt::Horizontal, tr("Survey Date"));
-    surveyModel->setHeaderData(TableColumns::Question1, Qt::Horizontal, tr("Question 1"));
-    surveyModel->setHeaderData(TableColumns::Question2, Qt::Horizontal, tr("Question 2"));
-    surveyModel->setHeaderData(TableColumns::Question3, Qt::Horizontal, tr("Question 3"));
-    surveyModel->setHeaderData(TableColumns::Temperature, Qt::Horizontal, tr("Temperature (°C)"));
+    surveyModel->setHeaderData(SurveyTableColumns::Date, Qt::Horizontal, tr("Survey Date"));
+    surveyModel->setHeaderData(SurveyTableColumns::Question1, Qt::Horizontal, tr("Question 1"));
+    surveyModel->setHeaderData(SurveyTableColumns::Question2, Qt::Horizontal, tr("Question 2"));
+    surveyModel->setHeaderData(SurveyTableColumns::Question3, Qt::Horizontal, tr("Question 3"));
+    surveyModel->setHeaderData(SurveyTableColumns::Temperature, Qt::Horizontal, tr("Temperature (°C)"));
+
+    closeDb();
+}
+
+void SurveyDatabase::updateEmployeeTableModel()
+{
+    openDb();
+
+    employeeModel->setQuery("SELECT emp_id, name FROM Employee ORDER BY name;", *surveyDb);
+
+    employeeModel->setHeaderData(EmployeeTableColumns::ID, Qt::Horizontal, tr("ID"));
+    employeeModel->setHeaderData(EmployeeTableColumns::Name, Qt::Horizontal, tr("Name"));
 
     closeDb();
 }

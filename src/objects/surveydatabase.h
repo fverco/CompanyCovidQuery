@@ -2,6 +2,7 @@
 #define SURVEYDATABASE_H
 
 #include "surveytablemodel.h"
+#include "employeetablemodel.h"
 
 #include <QSharedPointer>
 #include <QGuiApplication>
@@ -18,10 +19,11 @@ class SurveyDatabase : public QObject
 public:
     explicit SurveyDatabase(QObject *parent = nullptr);
     bool createDatabase(const QString &dir = QGuiApplication::applicationDirPath() + "/survey.data");
-    void updateTableModel();
+    void updateSurveyTableModel();
+    void updateEmployeeTableModel();
 
-    QSqlQueryModel* getSurveyModel();
-    QMap<int, QString> getEmployees();
+    QSqlQueryModel *getSurveyModel();
+    QSqlQueryModel *getEmployeeModel();
     int getCurrentEmployeeId() const;
 
     void setCurrentEmployeeId(const int &id);
@@ -38,7 +40,8 @@ public:
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.
-    QSharedPointer<SurveyTableModel> surveyModel; ///< The data model used to display data from the DB in a view.
+    QSharedPointer<SurveyTableModel> surveyModel; ///< The data model used to display survey data from the DB in a view.
+    QSharedPointer<EmployeeTableModel> employeeModel; ///< The data model used to display employee data from the DB in a view.
     QString dbLocation;     ///< The full path to where the database file is stored.
     int currentEmpId;       ///< The current employee ID being focussed on.
 
