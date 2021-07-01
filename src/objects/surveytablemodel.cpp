@@ -22,15 +22,15 @@ QVariant SurveyTableModel::data(const QModelIndex &index, int role) const
 
     switch (index.column()) {
 
-    case TableColumns::Date:
+    case SurveyTableColumns::Date:
         return convertDateValue(value);
 
-    case TableColumns::Question1:
-    case TableColumns::Question2:
-    case TableColumns::Question3:
+    case SurveyTableColumns::Question1:
+    case SurveyTableColumns::Question2:
+    case SurveyTableColumns::Question3:
         return convertBoolValue(value);
 
-    case TableColumns::Temperature:
+    case SurveyTableColumns::Temperature:
         return convertDoubleValue(value);
 
     default:
