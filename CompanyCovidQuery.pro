@@ -9,19 +9,24 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/forms/employeedialog.cpp \
     src/forms/surveydialog.cpp \
+    src/objects/employeetablemodel.cpp \
     src/objects/surveydatabase.cpp \
     src/main.cpp \
     src/forms/mainwindow.cpp \
     src/objects/surveytablemodel.cpp
 
 HEADERS += \
+    src/forms/employeedialog.h \
     src/forms/surveydialog.h \
+    src/objects/employeetablemodel.h \
     src/objects/surveydatabase.h \
     src/forms/mainwindow.h \
     src/objects/surveytablemodel.h
 
 FORMS += \
+    src/forms/employeedialog.ui \
     src/forms/surveydialog.ui \
     src/forms/mainwindow.ui
 
