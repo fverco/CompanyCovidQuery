@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "surveydialog.h"
+#include "employeedialog.h"
 
 #include <QSqlTableModel>
 #include <QMessageBox>
@@ -21,15 +22,19 @@ MainWindow::MainWindow(QWidget *parent)
     // Update the survey table when a new employee is selected.
     connect(ui->comboEmployee, &QComboBox::currentIndexChanged, this, &MainWindow::updateSurveyTableModel);
 
-    // Connect the new employee action button.
+    // Connect the new employee and employee list action buttons.
     connect(ui->actionNewEmployee, &QAction::triggered, this, &MainWindow::addEmployee);
+    connect(ui->actionEmployeeList, &QAction::triggered, this, &MainWindow::openEmployeeDialog);
 
     // Setup the database.
     if (!surveyDb.createDatabase())
         QApplication::quit();
 
-    updateEmployeeComboBox();
+    // Set the model for the employee combobox.
+    ui->comboEmployee->setModel(surveyDb.getEmployeeModel());
+    ui->comboEmployee->setModelColumn(EmployeeTableColumns::Name);
 
+    // Set the model for the survey table.
     ui->tableSurveys->setModel(surveyDb.getSurveyModel());
 
     setupSurveyTableContextMenu();
@@ -45,23 +50,11 @@ MainWindow::~MainWindow()
 
 /*!
  * \brief Retrieves a list of all employees and assign it to the Employee ComboBox in the UI.
- * \note This changes the currentEmpId of the surveyDb.
  * \note After updating the Employee ComboBox it will implicitly update the survey table. This happens ONLY if you have connected the combobox's signal with this class' updateSurveyTableModel slot.
  */
 void MainWindow::updateEmployeeComboBox()
 {
-    ui->comboEmployee->clear();
-
-    QMap<int, QString> empList(surveyDb.getEmployees());
-    QMapIterator<int, QString> i(empList);
-
-    if (empList.size() > 0) {
-        while(i.hasNext()) {
-            i.next();
-            ui->comboEmployee->addItem(i.value(), i.key());
-        }
-    } else
-        ui->comboEmployee->addItem("-", -1);
+    surveyDb.updateEmployeeTableModel();
 }
 
 /*!
@@ -69,8 +62,8 @@ void MainWindow::updateEmployeeComboBox()
  */
 void MainWindow::updateSurveyTableModel()
 {
-    surveyDb.setCurrentEmployeeId(ui->comboEmployee->currentData().toInt());
-    surveyDb.updateTableModel();
+    surveyDb.setCurrentEmployeeId(getCurrentEmployeeId());
+    surveyDb.updateSurveyTableModel();
 }
 
 /*!
@@ -98,12 +91,25 @@ void MainWindow::addEmployee()
  */
 void MainWindow::openSurveyDialog()
 {
-    SurveyDialog *surveyDialog(new SurveyDialog(ui->comboEmployee->currentData().toInt() , this));
+    SurveyDialog *surveyDialog(new SurveyDialog(getCurrentEmployeeId(), this));
 
     connect(surveyDialog, &SurveyDialog::sendNewSurvey, this, &MainWindow::addSurvey);
 
     surveyDialog->setAttribute(Qt::WA_DeleteOnClose);
     surveyDialog->open();
+}
+
+/*!
+ * \brief Opens the employee dialog
+ */
+void MainWindow::openEmployeeDialog()
+{
+    EmployeeDialog *employeeDialog(new EmployeeDialog(surveyDb.getEmployeeModel()));
+
+    connect(employeeDialog, &EmployeeDialog::addEmployee, this, &MainWindow::addEmployee);
+
+    employeeDialog->setAttribute(Qt::WA_DeleteOnClose);
+    employeeDialog->open();
 }
 
 /*!
@@ -170,16 +176,26 @@ void MainWindow::setupSurveyTableContextMenu()
             QSqlRecord surveyRecord(surveyDb.getSurveyModel()->record(index.row()));
 
             // Convert the formatted string date to a QDate value.
-            QDate surveyDate(QDate::fromString(surveyRecord.value(TableColumns::Date).toString(), "dd/MM/yyyy"));
+            QDate surveyDate(QDate::fromString(surveyRecord.value(SurveyTableColumns::Date).toString(), "dd/MM/yyyy"));
 
-            // Get the current employee's ID.
-            int surveyEmpId(ui->comboEmployee->currentData().toInt());
-
-            removeSurvey(surveyDate, surveyEmpId);
+            removeSurvey(surveyDate, getCurrentEmployeeId());
         }
     });
 
 
     ui->tableSurveys->addAction(deleteAction);
+}
+
+/*!
+ * \brief Retrieves the ID of the employee currently selected in the employee combobox.
+ * \return An integer with the employee's ID
+ */
+int MainWindow::getCurrentEmployeeId()
+{
+    int row = ui->comboEmployee->currentIndex();
+    QModelIndex index = ui->comboEmployee->model()->index(row, EmployeeTableColumns::ID);
+    QVariant id = ui->comboEmployee->model()->data(index);
+
+    return id.toInt();
 }
 
