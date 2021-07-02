@@ -24,16 +24,17 @@ public slots:
     void updateEmployeeComboBox();
     void updateSurveyTableModel();
     void addEmployee();
+    void removeEmployee(const int &empId);
     void openSurveyDialog();
     void openEmployeeDialog();
-    void addSurvey(const QDate& date,
-                   const int& empId,
-                   const bool& qOne,
-                   const bool& qTwo,
-                   const bool& qThree,
-                   const double& temp);
-    void removeSurvey(const QDate& date,
-                      const int& empId);
+    void addSurvey(const QDate &date,
+                   const int &empId,
+                   const bool &qOne,
+                   const bool &qTwo,
+                   const bool &qThree,
+                   const double &temp);
+    void removeSurvey(const QDate &date,
+                      const int &empId);
 
 
 private slots:
@@ -44,6 +45,6 @@ private:
     SurveyDatabase surveyDb;    ///< The database variable that stores the survey data.
 
     void setupSurveyTableContextMenu();
-    int getCurrentEmployeeId();
+    int getCurrentEmployeeId() const;
 };
 #endif // MAINWINDOW_H

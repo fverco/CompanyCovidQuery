@@ -73,8 +73,8 @@ void MainWindow::addEmployee()
 {
     bool ok;
     QString empName = QInputDialog::getText(this, tr("New Employee"),
-                                         tr("Employee's name:"), QLineEdit::Normal,
-                                         "", &ok);
+                                            tr("Employee's name:"), QLineEdit::Normal,
+                                            "", &ok);
 
     if (ok && !empName.isEmpty()) {
         if (surveyDb.addEmployee(empName)) {
@@ -82,6 +82,26 @@ void MainWindow::addEmployee()
             QMessageBox::information(this, tr("Success"), tr("The new employee has been successfully added."));
         } else
             QMessageBox::critical(this, tr("Error"), tr("An unexpected error has ocurred when adding the new employee."));
+    }
+}
+
+/*!
+ * \brief Deletes the given employee from the database.
+ * \param empId = The employee's ID
+ * \note This does generate a confirmation message before deletion.
+ */
+void MainWindow::removeEmployee(const int &empId)
+{
+
+    bool accepted = QMessageBox::question(this,
+                                          "Delete Employee",
+                                          "Are you sure you wish to delete this employee?\nCaution: This will delete all their surveys as well.");
+
+    if (accepted) {
+        if (surveyDb.removeEmployee(empId))
+            updateEmployeeComboBox();
+        else
+            QMessageBox::critical(this, tr("Error"), tr("An unexpected error has ocurred while removing the employee."));
     }
 }
 
@@ -107,6 +127,7 @@ void MainWindow::openEmployeeDialog()
     EmployeeDialog *employeeDialog(new EmployeeDialog(surveyDb.getEmployeeModel()));
 
     connect(employeeDialog, &EmployeeDialog::addEmployee, this, &MainWindow::addEmployee);
+    connect(employeeDialog, &EmployeeDialog::removeEmployee, this, &MainWindow::removeEmployee);
 
     employeeDialog->setAttribute(Qt::WA_DeleteOnClose);
     employeeDialog->open();
@@ -190,11 +211,11 @@ void MainWindow::setupSurveyTableContextMenu()
  * \brief Retrieves the ID of the employee currently selected in the employee combobox.
  * \return An integer with the employee's ID
  */
-int MainWindow::getCurrentEmployeeId()
+int MainWindow::getCurrentEmployeeId() const
 {
-    int row = ui->comboEmployee->currentIndex();
+    int row(ui->comboEmployee->currentIndex());
     QModelIndex index = ui->comboEmployee->model()->index(row, EmployeeTableColumns::ID);
-    QVariant id = ui->comboEmployee->model()->data(index);
+    QVariant id(ui->comboEmployee->model()->data(index));
 
     return id.toInt();
 }
