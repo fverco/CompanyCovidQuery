@@ -29,6 +29,7 @@ public:
     void setCurrentEmployeeId(const int &id);
 
     bool addEmployee(const QString &name);
+    bool removeEmployee(const int &empId);
     bool addSurvey(const QDate &date,
                    const int &empId,
                    const bool &qOne,
@@ -37,6 +38,8 @@ public:
                    const double &temp);
     bool removeSurvey(const QDate &date,
                       const int &empId);
+
+    bool employeeExist(const QString &name);
 
 private:
     QSharedPointer<QSqlDatabase> surveyDb;      ///< The SQL Database variable where the data is stored.

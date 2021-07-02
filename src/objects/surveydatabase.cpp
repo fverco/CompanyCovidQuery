@@ -41,7 +41,7 @@ bool SurveyDatabase::createDatabase(const QString &dir)
 
             surveyQry.prepare("CREATE TABLE Employee ("
                               "emp_id INTEGER UNIQUE NOT NULL PRIMARY KEY AUTOINCREMENT,"
-                              "name TEXT NOT NULL);");
+                              "name TEXT NOT NULL COLLATE NOCASE);");
 
             if (!surveyQry.exec()) {
                 qDebug() << "(DB) Error creating employee info: " << surveyQry.lastError().text() << Qt::endl;
@@ -118,10 +118,12 @@ void SurveyDatabase::setCurrentEmployeeId(const int &id)
  * \brief Adds a new employee to the database.
  * \param name = The name of the new employee
  * \return A boolean value that states whether the transaction was successful or not.
+ * \note This will check if the name doesn't already exist and that it is not an empty string.
+ * \note It uses the employeeExists() function to verify its existence.
  */
 bool SurveyDatabase::addEmployee(const QString &name)
 {
-    if (name.length() > 0) {
+    if (name.length() > 0 && !employeeExist(name)) {
         openDb();
 
         QSqlQuery surveyQry(*surveyDb);
@@ -138,6 +140,44 @@ bool SurveyDatabase::addEmployee(const QString &name)
         }
     }
 
+    return false;
+}
+
+/*!
+ * \brief Removes a given employee from the database.
+ * \param empId = The employee's ID
+ * \return A boolean value that states whether the transaction was successful or not.
+ * \note This will also delete all surveys associated with this employee.
+ */
+bool SurveyDatabase::removeEmployee(const int &empId)
+{
+    openDb();
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    // Delete all surveys belonging to this employee.
+    surveyQry.prepare("DELETE FROM Survey "
+                      "WHERE emp_id = :id;");
+    surveyQry.bindValue(":id", empId);
+
+    if (surveyQry.exec()) {
+
+        // Delete this employee.
+        surveyQry.prepare("DELETE FROM Employee "
+                          "WHERE emp_id = :id;");
+
+        surveyQry.bindValue(":id", empId);
+
+        if (surveyQry.exec()) {
+            closeDb();
+            return true;
+        } else
+            qDebug() << "(DB) Error removing employee: " << surveyQry.lastError().text() << Qt::endl;
+
+    } else
+        qDebug() << "(DB) Error removing employee surveys: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
     return false;
 }
 
@@ -221,6 +261,35 @@ bool SurveyDatabase::removeSurvey(const QDate &date, const int &empId)
 
     closeDb();
     return false;
+}
+
+/*!
+ * \brief Checks if a given employee name is already in the database.
+ * \param name = The employee's name
+ * \return A boolean value that is true if it does exist, and is false if it does not exist.
+ * \note This is not case sensitive.
+ */
+bool SurveyDatabase::employeeExist(const QString &name)
+{
+    openDb();
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    surveyQry.prepare("SELECT COUNT(*) FROM Employee WHERE name = :n;");
+    surveyQry.bindValue(":n", name);
+
+    if (surveyQry.exec()) {
+        if (surveyQry.next()) {
+            if (surveyQry.value(0).toInt() == 0) {
+                closeDb();
+                return false;
+            }
+        }
+    } else
+        qDebug() << "(DB) Error verifying employee name: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
+    return true;
 }
 
 /*!
