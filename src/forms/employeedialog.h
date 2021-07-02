@@ -8,6 +8,9 @@ namespace Ui {
 class EmployeeDialog;
 }
 
+/*!
+ * \brief The window where employee data is displayed, added, edited and removed.
+ */
 class EmployeeDialog : public QDialog
 {
     Q_OBJECT

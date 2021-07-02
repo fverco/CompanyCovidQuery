@@ -3,6 +3,11 @@
 
 #include "../objects/employeetablemodel.h"
 
+/*!
+ * \brief The constructor for the EmployeeDialog.
+ * \param empModel = The model used to display the employees in a list
+ * \param parent = The QWidget to which this dialog is bound to
+ */
 EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EmployeeDialog)
@@ -13,27 +18,42 @@ EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
     ui->listEmployees->setModelColumn(EmployeeTableColumns::Name);
 }
 
+/*!
+ * \brief The destructor for the EmployeeDialog.
+ */
 EmployeeDialog::~EmployeeDialog()
 {
     delete ui;
 }
 
+/*!
+ * \brief Closes the dialog.
+ */
 void EmployeeDialog::on_btnClose_clicked()
 {
     this->close();
 }
 
+/*!
+ * \brief Prompts an operation to add a new employee.
+ */
 void EmployeeDialog::on_btnAdd_clicked()
 {
     emit addEmployee();
 }
 
-
+/*!
+ * \brief Deletes the selected employee.
+ */
 void EmployeeDialog::on_btnDelete_clicked()
 {
     emit removeEmployee(getCurrentEmployeeId());
 }
 
+/*!
+ * \brief Retrieves the ID of the employee currently selected.
+ * \return An integer value with the employee's ID.
+ */
 int EmployeeDialog::getCurrentEmployeeId() const
 {
     int row(ui->listEmployees->currentIndex().row());
