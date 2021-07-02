@@ -18,14 +18,17 @@ public:
 
 private slots:
     void on_btnClose_clicked();
-
     void on_btnAdd_clicked();
+    void on_btnDelete_clicked();
 
 signals:
     void addEmployee();
+    void removeEmployee(const int &empId);
 
 private:
     Ui::EmployeeDialog *ui;
+
+    int getCurrentEmployeeId() const;
 };
 
 #endif // EMPLOYEEDIALOG_H

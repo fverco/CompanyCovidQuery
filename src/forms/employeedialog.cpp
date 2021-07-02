@@ -28,3 +28,18 @@ void EmployeeDialog::on_btnAdd_clicked()
     emit addEmployee();
 }
 
+
+void EmployeeDialog::on_btnDelete_clicked()
+{
+    emit removeEmployee(getCurrentEmployeeId());
+}
+
+int EmployeeDialog::getCurrentEmployeeId() const
+{
+    int row(ui->listEmployees->currentIndex().row());
+    QModelIndex index = ui->listEmployees->model()->index(row, EmployeeTableColumns::ID);
+    QVariant id(ui->listEmployees->model()->data(index));
+
+    return id.toInt();
+}
+
