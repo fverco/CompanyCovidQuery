@@ -182,6 +182,66 @@ bool SurveyDatabase::removeEmployee(const int &empId)
 }
 
 /*!
+ * \brief Edits a given employee's current name and assigns it a new one.
+ * \param empId = The ID of the employee
+ * \param newName = The employee's new name to be assigned
+ * \return A boolean value that states whether the transaction was successful or not.
+ */
+bool SurveyDatabase::editEmployee(const int &empId, const QString &newName)
+{
+    openDb();
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    // Find the employee by ID and change their name.
+    surveyQry.prepare("UPDATE Employee "
+                      "SET name = :name "
+                      "WHERE emp_id = :id;");
+
+    surveyQry.bindValue(":name", newName);
+    surveyQry.bindValue(":id", empId);
+
+    if (surveyQry.exec()) {
+        closeDb();
+        return true;
+    } else
+        qDebug() << "(DB) Error editing employee by id: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
+    return false;
+}
+
+/*!
+ * \brief Edits a given employee's current name and assigns it a new one.
+ * \param currentName = The employee's current name before the change
+ * \param newName = The employee's new name to be assigned
+ * \return A boolean value that states whether the transaction was successful or not.
+ */
+bool SurveyDatabase::editEmployee(const QString &currentName, const QString &newName)
+{
+    openDb();
+
+    QSqlQuery surveyQry(*surveyDb);
+
+    // Find the employee by their current name and change it.
+    surveyQry.prepare("UPDATE Employee "
+                      "SET name = :newname "
+                      "WHERE name = :curname;");
+
+    surveyQry.bindValue(":newname", newName);
+    surveyQry.bindValue(":curname", currentName);
+
+    if (surveyQry.exec()) {
+        closeDb();
+        return true;
+    } else
+        qDebug() << "(DB) Error editing employee by name: " << surveyQry.lastError().text() << Qt::endl;
+
+    closeDb();
+    return false;
+}
+
+/*!
  * \brief Adds a new survey to the database.
  * \param empId = The employee's ID
  * \param qOne = The answer to question 1

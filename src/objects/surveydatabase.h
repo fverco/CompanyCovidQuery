@@ -30,6 +30,9 @@ public:
 
     bool addEmployee(const QString &name);
     bool removeEmployee(const int &empId);
+    bool editEmployee(const int &empId, const QString &newName);
+    bool editEmployee(const QString &currentName, const QString &newName);
+
     bool addSurvey(const QDate &date,
                    const int &empId,
                    const bool &qOne,
