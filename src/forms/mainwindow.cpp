@@ -98,9 +98,10 @@ void MainWindow::removeEmployee(const int &empId)
                                                 "Are you sure you wish to delete this employee?\nCaution: This will delete all their surveys as well."));
 
     if (buttonPressed == QMessageBox::StandardButton::Yes) {
-        if (surveyDb.removeEmployee(empId))
+        if (surveyDb.removeEmployee(empId)) {
             updateEmployeeComboBox();
-        else
+            updateSurveyTableModel();
+        } else
             QMessageBox::critical(this, tr("Error"), tr("An unexpected error has ocurred while removing the employee."));
     }
 }
