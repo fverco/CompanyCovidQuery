@@ -93,11 +93,11 @@ void MainWindow::addEmployee()
 void MainWindow::removeEmployee(const int &empId)
 {
 
-    bool accepted = QMessageBox::question(this,
-                                          "Delete Employee",
-                                          "Are you sure you wish to delete this employee?\nCaution: This will delete all their surveys as well.");
+    QMessageBox::StandardButton buttonPressed(QMessageBox::question(this,
+                                                "Delete Employee",
+                                                "Are you sure you wish to delete this employee?\nCaution: This will delete all their surveys as well."));
 
-    if (accepted) {
+    if (buttonPressed == QMessageBox::StandardButton::Yes) {
         if (surveyDb.removeEmployee(empId))
             updateEmployeeComboBox();
         else
