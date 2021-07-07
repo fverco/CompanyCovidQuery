@@ -25,6 +25,7 @@ public slots:
     void updateSurveyTableModel();
     void addEmployee();
     void removeEmployee(const int &empId);
+    void editEmployee(const int &empId, const QString &currentName);
     void openSurveyDialog();
     void openEmployeeDialog();
     void addSurvey(const QDate &date,

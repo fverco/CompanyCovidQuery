@@ -106,6 +106,27 @@ void MainWindow::removeEmployee(const int &empId)
 }
 
 /*!
+ * \brief Displays an existing employee's name and allows the user to edit it.
+ * \param empId = The employee's ID
+ * \param currentName = The name of the employee before the change
+ */
+void MainWindow::editEmployee(const int &empId, const QString &currentName)
+{
+    bool ok;
+    QString newName = QInputDialog::getText(this, tr("Edit") + " " + currentName,
+                                            tr("Employee's name:"), QLineEdit::Normal,
+                                            currentName, &ok);
+
+    if (ok && !newName.isEmpty()) {
+        if (surveyDb.editEmployee(empId, newName)) {
+            updateEmployeeComboBox();
+            QMessageBox::information(this, tr("Success"), currentName + " " + tr("has been successfully renamed to") + " " + newName + ".");
+        } else
+            QMessageBox::critical(this, tr("Error"), tr("An unexpected error ocurred while changing") + " " + currentName + tr("'s name."));
+    }
+}
+
+/*!
  * \brief Opens the survey dialog
  * This will also assign the current selected employee's ID as the ID to which the new survey will belong to.
  */
@@ -128,6 +149,7 @@ void MainWindow::openEmployeeDialog()
 
     connect(employeeDialog, &EmployeeDialog::addEmployee, this, &MainWindow::addEmployee);
     connect(employeeDialog, &EmployeeDialog::removeEmployee, this, &MainWindow::removeEmployee);
+    connect(employeeDialog, &EmployeeDialog::editEmployee, this, &MainWindow::editEmployee);
 
     employeeDialog->setAttribute(Qt::WA_DeleteOnClose);
     employeeDialog->open();
