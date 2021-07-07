@@ -4,6 +4,7 @@
 #include "../objects/employeetablemodel.h"
 
 #include <QAction>
+#include <QMenu>
 
 /*!
  * \brief The constructor for the EmployeeDialog.
@@ -12,7 +13,8 @@
  */
 EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::EmployeeDialog)
+    ui(new Ui::EmployeeDialog),
+    contextMenu(new QMenu(ui->listEmployees))
 {
     ui->setupUi(this);
 
@@ -82,6 +84,16 @@ QString EmployeeDialog::getCurrentEmployeeName() const
 }
 
 /*!
+ * \brief Opens a context menu only if an item in the list is right clicked.
+ * \param pos = The position of the mouse cursor when right clicked
+ */
+void EmployeeDialog::contextMenuRequested(const QPoint &pos)
+{
+    if (ui->listEmployees->indexAt(pos).row() > -1)
+        contextMenu->popup(ui->listEmployees->viewport()->mapToGlobal(pos));
+}
+
+/*!
  * \brief Prompts a command to edit the currently selected employee entry.
  */
 void EmployeeDialog::on_btnEdit_clicked()
@@ -95,7 +107,7 @@ void EmployeeDialog::on_btnEdit_clicked()
 void EmployeeDialog::setupEmployeeListContextMenu()
 {
     // Use listEmployees' actions as context menu items.
-    ui->listEmployees->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->listEmployees->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QAction* editAction(new QAction("Edit", this));
     connect(editAction, &QAction::triggered, [this]() {
@@ -107,7 +119,9 @@ void EmployeeDialog::setupEmployeeListContextMenu()
         emit removeEmployee(getCurrentEmployeeId());
     });
 
-    ui->listEmployees->addAction(editAction);
-    ui->listEmployees->addAction(deleteAction);
+    contextMenu->addAction(editAction);
+    contextMenu->addAction(deleteAction);
+
+    connect(ui->listEmployees, &QWidget::customContextMenuRequested, this, &EmployeeDialog::contextMenuRequested);
 }
 

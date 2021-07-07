@@ -8,6 +8,8 @@ namespace Ui {
 class EmployeeDialog;
 }
 
+class QMenu;
+
 /*!
  * \brief The window where employee data is displayed, added, edited and removed.
  */
@@ -32,10 +34,12 @@ signals:
 
 private:
     Ui::EmployeeDialog *ui;
+    QMenu *contextMenu;
 
     void setupEmployeeListContextMenu();
     int getCurrentEmployeeId() const;
     QString getCurrentEmployeeName() const;
+    void contextMenuRequested(const QPoint &pos);
 };
 
 #endif // EMPLOYEEDIALOG_H
