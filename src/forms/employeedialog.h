@@ -33,6 +33,7 @@ signals:
 private:
     Ui::EmployeeDialog *ui;
 
+    void setupEmployeeListContextMenu();
     int getCurrentEmployeeId() const;
     QString getCurrentEmployeeName() const;
 };

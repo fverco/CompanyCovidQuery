@@ -3,6 +3,8 @@
 
 #include "../objects/employeetablemodel.h"
 
+#include <QAction>
+
 /*!
  * \brief The constructor for the EmployeeDialog.
  * \param empModel = The model used to display the employees in a list
@@ -16,6 +18,8 @@ EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
 
     ui->listEmployees->setModel(empModel);
     ui->listEmployees->setModelColumn(EmployeeTableColumns::Name);
+
+    setupEmployeeListContextMenu();
 }
 
 /*!
@@ -44,6 +48,7 @@ void EmployeeDialog::on_btnAdd_clicked()
 
 /*!
  * \brief Deletes the selected employee.
+ * \note This function only calls removeSelectedEmployee().
  */
 void EmployeeDialog::on_btnDelete_clicked()
 {
@@ -82,5 +87,27 @@ QString EmployeeDialog::getCurrentEmployeeName() const
 void EmployeeDialog::on_btnEdit_clicked()
 {
     emit editEmployee(getCurrentEmployeeId(), getCurrentEmployeeName());
+}
+
+/*!
+ * \brief Create the context menu for the employee list.
+ */
+void EmployeeDialog::setupEmployeeListContextMenu()
+{
+    // Use listEmployees' actions as context menu items.
+    ui->listEmployees->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    QAction* editAction(new QAction("Edit", this));
+    connect(editAction, &QAction::triggered, [this]() {
+        emit editEmployee(getCurrentEmployeeId(), getCurrentEmployeeName());
+    });
+
+    QAction* deleteAction(new QAction("Delete", this));
+    connect(deleteAction, &QAction::triggered, [this]() {
+        emit removeEmployee(getCurrentEmployeeId());
+    });
+
+    ui->listEmployees->addAction(editAction);
+    ui->listEmployees->addAction(deleteAction);
 }
 
