@@ -57,9 +57,30 @@ void EmployeeDialog::on_btnDelete_clicked()
 int EmployeeDialog::getCurrentEmployeeId() const
 {
     int row(ui->listEmployees->currentIndex().row());
-    QModelIndex index = ui->listEmployees->model()->index(row, EmployeeTableColumns::ID);
+    QModelIndex index(ui->listEmployees->model()->index(row, EmployeeTableColumns::ID));
     QVariant id(ui->listEmployees->model()->data(index));
 
     return id.toInt();
+}
+
+/*!
+ * \brief Retrieves the name of the employee currently selected.
+ * \return A QString value with the employee's name.
+ */
+QString EmployeeDialog::getCurrentEmployeeName() const
+{
+    int row(ui->listEmployees->currentIndex().row());
+    QModelIndex index(ui->listEmployees->model()->index(row, EmployeeTableColumns::Name));
+    QVariant name(ui->listEmployees->model()->data(index));
+
+    return name.toString();
+}
+
+/*!
+ * \brief Prompts a command to edit the currently selected employee entry.
+ */
+void EmployeeDialog::on_btnEdit_clicked()
+{
+    emit editEmployee(getCurrentEmployeeId(), getCurrentEmployeeName());
 }
 

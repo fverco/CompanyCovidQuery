@@ -23,15 +23,18 @@ private slots:
     void on_btnClose_clicked();
     void on_btnAdd_clicked();
     void on_btnDelete_clicked();
+    void on_btnEdit_clicked();
 
 signals:
     void addEmployee();
     void removeEmployee(const int &empId);
+    void editEmployee(const int &empId, const QString &currentName);
 
 private:
     Ui::EmployeeDialog *ui;
 
     int getCurrentEmployeeId() const;
+    QString getCurrentEmployeeName() const;
 };
 
 #endif // EMPLOYEEDIALOG_H
