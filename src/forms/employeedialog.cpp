@@ -14,7 +14,7 @@
 EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EmployeeDialog),
-    contextMenu(new QMenu(ui->listEmployees))
+    contextMenu(new QMenu(this))
 {
     ui->setupUi(this);
 
