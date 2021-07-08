@@ -5,6 +5,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 
 /*!
  * \brief The constructor for the EmployeeDialog.
@@ -18,9 +19,11 @@ EmployeeDialog::EmployeeDialog(QSqlQueryModel *empModel, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Setup the listEmployees list.
     ui->listEmployees->setModel(empModel);
     ui->listEmployees->setModelColumn(EmployeeTableColumns::Name);
 
+    // Setup the context menu for listEmployees.
     setupEmployeeListContextMenu();
 }
 
@@ -54,7 +57,10 @@ void EmployeeDialog::on_btnAdd_clicked()
  */
 void EmployeeDialog::on_btnDelete_clicked()
 {
-    emit removeEmployee(getCurrentEmployeeId());
+    if (ui->listEmployees->currentIndex().row() > -1)
+        emit removeEmployee(getCurrentEmployeeId());
+    else
+        QMessageBox::information(this, "No entry selected", "Please select an entry from the list first.");
 }
 
 /*!
@@ -98,7 +104,10 @@ void EmployeeDialog::contextMenuRequested(const QPoint &pos)
  */
 void EmployeeDialog::on_btnEdit_clicked()
 {
-    emit editEmployee(getCurrentEmployeeId(), getCurrentEmployeeName());
+    if (ui->listEmployees->currentIndex().row() > -1)
+        emit editEmployee(getCurrentEmployeeId(), getCurrentEmployeeName());
+    else
+        QMessageBox::information(this, "No entry selected", "Please select an entry from the list first.");
 }
 
 /*!
