@@ -243,26 +243,22 @@ bool SurveyDatabase::editEmployee(const QString &currentName, const QString &new
 
 /*!
  * \brief Adds a new survey to the database.
- * \param empId = The employee's ID
- * \param qOne = The answer to question 1
- * \param qTwo = The answer to question 2
- * \param qThree = The answer to question 3
- * \param temp = The employee's temperature
+ * \param newSurvey = The new survey to be added
  * \return A boolean value that states whether the transaction was successful or not.
  * \note This will also check if a combination of this date and employee ID hasn't already been added. It will return false if it was.
  */
-bool SurveyDatabase::addSurvey(const QDate &date, const int &empId, const bool &qOne, const bool &qTwo, const bool &qThree, const double &temp)
+bool SurveyDatabase::addSurvey(const Survey &newSurvey)
 {
     openDb();
 
-    QDateTime surveyDate(date, QTime(12,0));
+    QDateTime surveyDate(newSurvey.getSurveyDate(), QTime(12,0));
     int surveyDateUnix(surveyDate.toSecsSinceEpoch());
 
     QSqlQuery surveyQry(*surveyDb);
 
     surveyQry.prepare("SELECT COUNT(*) FROM Survey WHERE survey_date = :date AND emp_id = :id;");
     surveyQry.bindValue(":date", surveyDateUnix);
-    surveyQry.bindValue(":id", empId);
+    surveyQry.bindValue(":id", newSurvey.getEmployeeId());
 
     if (surveyQry.exec()) {
         if (surveyQry.next()) {
@@ -272,11 +268,11 @@ bool SurveyDatabase::addSurvey(const QDate &date, const int &empId, const bool &
                                   "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
 
                 surveyQry.bindValue(":date", surveyDateUnix);
-                surveyQry.bindValue(":id", empId);
-                surveyQry.bindValue(":q1", qOne);
-                surveyQry.bindValue(":q2", qTwo);
-                surveyQry.bindValue(":q3", qThree);
-                surveyQry.bindValue(":temp", temp);
+                surveyQry.bindValue(":id", newSurvey.getEmployeeId());
+                surveyQry.bindValue(":q1", newSurvey.getQuestionOne());
+                surveyQry.bindValue(":q2", newSurvey.getQuestionTwo());
+                surveyQry.bindValue(":q3", newSurvey.getQuestionThree());
+                surveyQry.bindValue(":temp", newSurvey.getTemperature());
 
                 if (surveyQry.exec()) {
                     closeDb();

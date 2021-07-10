@@ -3,6 +3,7 @@
 
 #include "surveytablemodel.h"
 #include "employeetablemodel.h"
+#include "survey.h"
 
 #include <QSharedPointer>
 #include <QGuiApplication>
@@ -33,12 +34,7 @@ public:
     bool editEmployee(const int &empId, const QString &newName);
     bool editEmployee(const QString &currentName, const QString &newName);
 
-    bool addSurvey(const QDate &date,
-                   const int &empId,
-                   const bool &qOne,
-                   const bool &qTwo,
-                   const bool &qThree,
-                   const double &temp);
+    bool addSurvey(const Survey &newSurvey);
     bool removeSurvey(const QDate &date,
                       const int &empId);
 
