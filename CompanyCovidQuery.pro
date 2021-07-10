@@ -12,6 +12,7 @@ SOURCES += \
     src/forms/employeedialog.cpp \
     src/forms/surveydialog.cpp \
     src/objects/employeetablemodel.cpp \
+    src/objects/survey.cpp \
     src/objects/surveydatabase.cpp \
     src/main.cpp \
     src/forms/mainwindow.cpp \
@@ -21,6 +22,7 @@ HEADERS += \
     src/forms/employeedialog.h \
     src/forms/surveydialog.h \
     src/objects/employeetablemodel.h \
+    src/objects/survey.h \
     src/objects/surveydatabase.h \
     src/forms/mainwindow.h \
     src/objects/surveytablemodel.h
