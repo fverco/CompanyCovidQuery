@@ -31,6 +31,8 @@ public:
     bool getQuestionThree() const;
     double getTemperature() const;
 
+    bool isValid() const;
+
 private:
     QDate surveyDate;   ///< The date the survey was answered (Used in combination with the employee ID to uniquely identify any survey).
     int empId;          ///< The ID of the employee to which the survey belongs to.

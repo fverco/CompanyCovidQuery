@@ -146,3 +146,13 @@ double Survey::getTemperature() const
 {
     return temp;
 }
+
+/*!
+ * \brief Determines if the survey is valid and can be added to the database.
+ * \return A boolean value that states if the survey is valid or not.
+ * \note This function checks if surveyDate is a valid QDate and empId is not a negative value.
+ */
+bool Survey::isValid() const
+{
+    return (surveyDate.isValid() && empId > -1);
+}
