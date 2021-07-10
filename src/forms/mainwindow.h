@@ -2,12 +2,15 @@
 #define MAINWINDOW_H
 
 #include "../objects/surveydatabase.h"
+#include "../objects/survey.h"
 
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class QMenu;
 
 /*!
  * \brief The main window to be used in the application.
@@ -26,16 +29,12 @@ public slots:
     void addEmployee();
     void removeEmployee(const int &empId);
     void editEmployee(const int &empId, const QString &currentName);
-    void openSurveyDialog();
+    void openSurveyDialog(const Survey &newSurvey = Survey());
     void openEmployeeDialog();
-    void addSurvey(const QDate &date,
-                   const int &empId,
-                   const bool &qOne,
-                   const bool &qTwo,
-                   const bool &qThree,
-                   const double &temp);
+    void addSurvey(const Survey &newSurvey);
     void removeSurvey(const QDate &date,
                       const int &empId);
+    void editSurvey(const Survey &survey);
 
 
 private slots:
@@ -44,8 +43,12 @@ private slots:
 private:
     Ui::MainWindow *ui;         ///< The reference to the UI of the MainWindow.
     SurveyDatabase surveyDb;    ///< The database variable that stores the survey data.
+    QMenu *contextMenu;
 
     void setupSurveyTableContextMenu();
     int getCurrentEmployeeId() const;
+    Survey getCurrentSurvey();
+    QDate getCurrentSurveyDate();
+    void contextMenuRequested(const QPoint &pos);
 };
 #endif // MAINWINDOW_H
