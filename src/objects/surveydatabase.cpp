@@ -246,45 +246,49 @@ bool SurveyDatabase::editEmployee(const QString &currentName, const QString &new
  * \param newSurvey = The new survey to be added
  * \return A boolean value that states whether the transaction was successful or not.
  * \note This will also check if a combination of this date and employee ID hasn't already been added. It will return false if it was.
+ * \note The new survey will be rejected if it is not valid. This function will return false.
  */
 bool SurveyDatabase::addSurvey(const Survey &newSurvey)
 {
-    openDb();
+    if (newSurvey.isValid()) {
+        openDb();
 
-    QDateTime surveyDate(newSurvey.getSurveyDate(), QTime(12,0));
-    int surveyDateUnix(surveyDate.toSecsSinceEpoch());
+        QDateTime surveyDate(newSurvey.getSurveyDate(), QTime(12,0));
+        int surveyDateUnix(surveyDate.toSecsSinceEpoch());
 
-    QSqlQuery surveyQry(*surveyDb);
+        QSqlQuery surveyQry(*surveyDb);
 
-    surveyQry.prepare("SELECT COUNT(*) FROM Survey WHERE survey_date = :date AND emp_id = :id;");
-    surveyQry.bindValue(":date", surveyDateUnix);
-    surveyQry.bindValue(":id", newSurvey.getEmployeeId());
+        surveyQry.prepare("SELECT COUNT(*) FROM Survey WHERE survey_date = :date AND emp_id = :id;");
+        surveyQry.bindValue(":date", surveyDateUnix);
+        surveyQry.bindValue(":id", newSurvey.getEmployeeId());
 
-    if (surveyQry.exec()) {
-        if (surveyQry.next()) {
-            if (surveyQry.value(0).toInt() == 0) {
+        if (surveyQry.exec()) {
+            if (surveyQry.next()) {
+                if (surveyQry.value(0).toInt() == 0) {
 
-                surveyQry.prepare("INSERT INTO Survey (survey_date, emp_id, q_one, q_two, q_three, temperature) "
+                    surveyQry.prepare("INSERT INTO Survey (survey_date, emp_id, q_one, q_two, q_three, temperature) "
                                   "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
 
-                surveyQry.bindValue(":date", surveyDateUnix);
-                surveyQry.bindValue(":id", newSurvey.getEmployeeId());
-                surveyQry.bindValue(":q1", newSurvey.getQuestionOne());
-                surveyQry.bindValue(":q2", newSurvey.getQuestionTwo());
-                surveyQry.bindValue(":q3", newSurvey.getQuestionThree());
-                surveyQry.bindValue(":temp", newSurvey.getTemperature());
+                    surveyQry.bindValue(":date", surveyDateUnix);
+                    surveyQry.bindValue(":id", newSurvey.getEmployeeId());
+                    surveyQry.bindValue(":q1", newSurvey.getQuestionOne());
+                    surveyQry.bindValue(":q2", newSurvey.getQuestionTwo());
+                    surveyQry.bindValue(":q3", newSurvey.getQuestionThree());
+                    surveyQry.bindValue(":temp", newSurvey.getTemperature());
 
-                if (surveyQry.exec()) {
-                    closeDb();
-                    return true;
-                } else
-                    qDebug() << "(DB) Error adding survey: " << surveyQry.lastError().text() << Qt::endl;
+                    if (surveyQry.exec()) {
+                        closeDb();
+                        return true;
+                    } else
+                        qDebug() << "(DB) Error adding survey: " << surveyQry.lastError().text() << Qt::endl;
+                }
             }
-        }
-    } else
-        qDebug() << "(DB) Error verifying survey: " << surveyQry.lastError().text() << Qt::endl;
+        } else
+            qDebug() << "(DB) Error verifying survey: " << surveyQry.lastError().text() << Qt::endl;
 
-    closeDb();
+        closeDb();
+    }
+
     return false;
 }
 
