@@ -37,6 +37,7 @@ public:
     bool addSurvey(const Survey &newSurvey);
     bool removeSurvey(const QDate &date,
                       const int &empId);
+    bool editSurvey(const Survey &editSurvey);
 
     bool employeeExist(const QString &name);
 

@@ -267,7 +267,7 @@ bool SurveyDatabase::addSurvey(const Survey &newSurvey)
                 if (surveyQry.value(0).toInt() == 0) {
 
                     surveyQry.prepare("INSERT INTO Survey (survey_date, emp_id, q_one, q_two, q_three, temperature) "
-                                  "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
+                                      "VALUES (:date, :id, :q1, :q2, :q3, :temp);");
 
                     surveyQry.bindValue(":date", surveyDateUnix);
                     surveyQry.bindValue(":id", newSurvey.getEmployeeId());
@@ -320,6 +320,46 @@ bool SurveyDatabase::removeSurvey(const QDate &date, const int &empId)
         qDebug() << "(DB) Error removing survey: " << surveyQry.lastError().text() << Qt::endl;
 
     closeDb();
+    return false;
+}
+
+/*!
+ * \brief Edits an existing survey in the database.
+ * \param editSurvey = The survey data to edit the survey with
+ * \return A boolean value that states whether the transaction was successful or not.
+ * \note The survey will be rejected if it is not valid. This function will return false.
+ */
+bool SurveyDatabase::editSurvey(const Survey &editSurvey)
+{
+    if (editSurvey.isValid()) {
+        openDb();
+
+        QDateTime surveyDate(editSurvey.getSurveyDate(), QTime(12,0));
+        int surveyDateUnix(surveyDate.toSecsSinceEpoch());
+
+        QSqlQuery surveyQry(*surveyDb);
+
+        surveyQry.prepare("UPDATE Survey "
+                          "SET q_one = :q1, q_two = :q2, q_three = :q3, temperature = :temp "
+                          "WHERE survey_date = :date AND emp_id = :id;");
+
+        surveyQry.bindValue(":date", surveyDateUnix);
+        surveyQry.bindValue(":id", editSurvey.getEmployeeId());
+        surveyQry.bindValue(":q1", editSurvey.getQuestionOne());
+        surveyQry.bindValue(":q2", editSurvey.getQuestionTwo());
+        surveyQry.bindValue(":q3", editSurvey.getQuestionThree());
+        surveyQry.bindValue(":temp", editSurvey.getTemperature());
+
+        if (surveyQry.exec()) {
+            closeDb();
+            return true;
+        } else
+            qDebug() << "(DB) Error updating survey: " << surveyQry.lastError().text() << Qt::endl;
+
+
+        closeDb();
+    }
+
     return false;
 }
 
