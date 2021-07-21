@@ -1,2 +1,2 @@
 # CCQ - Company Covid Query
-An application used by my company to record survey forms, regarding COVID, filled in by our employees.
+An application used to record survey forms, regarding COVID, filled in by employees.
